@@ -1,8 +1,8 @@
 {
-  "name": "Daiki52/fuel-vue",
+  "name": "daiki52/fuel-vue",
   "description": "FuelPHP package for integrating Vite/Vue/Inertia assets.",
   "type": "fuel-package",
-	"homepage": "https://github.com/Daiki52/fuel-vue",
+	"homepage": "https://github.com/daiki52/fuel-vue",
   "license": "MIT",
   "autoload": {
     "classmap": [

@@ -33,5 +33,5 @@ Many production systems still run on FuelPHP, while frontend expectations have s
 ## Installation
 
 ```bash
-composer require Daiki52/fuel-vue
+composer require daiki52/fuel-vue
 ```
