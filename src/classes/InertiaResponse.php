@@ -7,6 +7,30 @@ namespace FuelVue;
  */
 class InertiaResponse extends \Fuel\Core\Response
 {
+	/**
+	 * Inertia::location 用のレスポンスを生成します。
+	 * Inertia リクエスト時は 409 + X-Inertia-Location を返し、
+	 * 非 Inertia リクエスト時は通常のリダイレクトを返します。
+	 *
+	 * @param string $url
+	 * @return \Fuel\Core\Response
+	 */
+	public static function location($url)
+	{
+		$response = new \Fuel\Core\Response();
+		if (self::is_inertia_request_static())
+		{
+			$response->set_status(409);
+			$response->set_header('X-Inertia-Location', $url);
+			$response->body('');
+			return $response;
+		}
+
+		$response->set_status(302);
+		$response->set_header('Location', $url);
+		return $response;
+	}
+
 	/** @var string|null */
 	private $component;
 	/** @var array */
@@ -517,7 +541,7 @@ class InertiaResponse extends \Fuel\Core\Response
 			$value = $value->value();
 		}
 
-		if (is_callable($value))
+		if ($value instanceof \Closure || (is_object($value) && is_callable($value)))
 		{
 			return $this->resolve_lazy_props($value());
 		}
@@ -632,6 +656,16 @@ class InertiaResponse extends \Fuel\Core\Response
 	private function is_inertia_request()
 	{
 		return (bool) $this->_get_header('X-Inertia');
+	}
+
+	/**
+	 * 静的メソッドから Inertia リクエストかどうかを判定します。
+	 *
+	 * @return bool
+	 */
+	private static function is_inertia_request_static()
+	{
+		return (bool) \Fuel\Core\Input::headers('X-Inertia');
 	}
 
 	/**

@@ -131,6 +131,18 @@ class Inertia
 	}
 
 	/**
+	 * 外部リダイレクト用の location レスポンスを生成します。
+	 * Inertia リクエスト時は 409 + X-Inertia-Location を返します。
+	 *
+	 * @param string $url
+	 * @return \Fuel\Core\Response
+	 */
+	public static function location($url)
+	{
+		return InertiaResponse::location($url);
+	}
+
+	/**
 	 * inertia 用のフラッシュデータを保存します。
 	 *
 	 * @param string|array $key
