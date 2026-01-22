@@ -13,6 +13,8 @@ class InertiaGlobalStore
 	private static $shared_props = array();
 	/** @var array */
 	private static $render_params = [];
+	/** @var string */
+	private static $error_page_component = 'ErrorPage';
 
 	/**
 	 * 共有 props を登録します。
@@ -82,6 +84,27 @@ class InertiaGlobalStore
 	public static function getRootViewPath()
 	{
 		return self::$inertia_root_view_path;
+	}
+
+	/**
+	 * 例外時に表示するコンポーネント名を設定します。
+	 *
+	 * @param string $component
+	 * @return void
+	 */
+	public static function setErrorPageComponent($component)
+	{
+		self::$error_page_component = $component;
+	}
+
+	/**
+	 * 例外時に表示するコンポーネント名を取得します。
+	 *
+	 * @return string
+	 */
+	public static function getErrorPageComponent()
+	{
+		return self::$error_page_component;
 	}
 
 	/**

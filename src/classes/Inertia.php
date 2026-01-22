@@ -98,6 +98,17 @@ class Inertia
 	}
 
 	/**
+	 * 例外時に表示するコンポーネント名を設定します。
+	 *
+	 * @param string $component
+	 * @return void
+	 */
+	public static function setErrorComponent($component)
+	{
+		InertiaGlobalStore::setErrorPageComponent($component);
+	}
+
+	/**
 	 * Inertia レスポンスを生成します。
 	 *
 	 * @param string $component

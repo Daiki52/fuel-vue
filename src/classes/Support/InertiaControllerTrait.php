@@ -50,7 +50,13 @@ trait InertiaControllerTrait
 			return null;
 		}
 
-		return $this->inertia->render('ErrorPage', [
+		// FuelVueが生成した例外はエラーページに置き換えない
+		if ($e instanceof \FuelVue\HttpResponseException) {
+			return null;
+		}
+
+		$component = \FuelVue\InertiaGlobalStore::getErrorPageComponent();
+		return \FuelVue\Inertia::render($component, [
 			'status' => $this->resolve_http_status($e),
 		]);
 	}
