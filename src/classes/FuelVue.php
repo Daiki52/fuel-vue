@@ -11,10 +11,6 @@ class FuelVue
 	private static $build_dir = "build";
 	/** @var string manifest ファイル名 */
 	private static $manifest_file = "manifest.json";
-	/** @var string|null 開発サーバーのURL */
-	private static $dev_server = 'http://localhost:5173';
-	/** @var bool|null 開発モードの明示指定 */
-	private static $devMode = null;
 
 	/**
 	 * ビルド成果物の配置ディレクトリ名を変更します。
@@ -36,28 +32,6 @@ class FuelVue
 	public static function useManifestFile($file)
 	{
 		self::$manifest_file = $file;
-	}
-
-	/**
-	 * Vite 開発サーバーのURLを変更します。
-	 *
-	 * @param string $url
-	 * @return void
-	 */
-	public static function useDevServer($url)
-	{
-		self::$dev_server = $url;
-	}
-
-	/**
-	 * 開発モードを設定します。デフォルトでは FuelPHP の環境設定に従います。
-	 *
-	 * @param bool $devMode
-	 * @return void
-	 */
-	public static function setDevMode($devMode)
-	{
-		self::$devMode = $devMode;
 	}
 
 	/**
@@ -128,12 +102,7 @@ class FuelVue
 	 */
 	private static function is_dev_mode()
 	{
-		if (self::$devMode !== null)
-		{
-			return self::$devMode;
-		}
-
-		return isset(\Fuel\Core\Fuel::$env) && \Fuel\Core\Fuel::$env === \Fuel\Core\Fuel::DEVELOPMENT;
+		return is_file(self::hot_file_path());
 	}
 
 	/**
@@ -145,7 +114,7 @@ class FuelVue
 	private static function build_dev_tags($entry_key)
 	{
 		$entry_keys = is_array($entry_key) ? $entry_key : array($entry_key);
-		$dev_server = rtrim(self::$dev_server, '/');
+		$dev_server = rtrim(self::read_hot_url(), '/');
 		$tags = array();
 		$tags[] = '<script type="module" src="' . htmlspecialchars($dev_server . '/@vite/client', ENT_QUOTES, 'UTF-8') . '"></script>';
 		foreach ($entry_keys as $entry)
@@ -155,6 +124,39 @@ class FuelVue
 		}
 
 		return implode("\n", $tags);
+	}
+
+	/**
+	 * hot ファイルのパスを返します。
+	 *
+	 * @return string
+	 */
+	private static function hot_file_path()
+	{
+		return self::public_path() . DIRECTORY_SEPARATOR . 'hot';
+	}
+
+	/**
+	 * hot ファイルから開発サーバーのURLを取得します。
+	 *
+	 * @return string
+	 * @throws FuelVueException
+	 */
+	private static function read_hot_url()
+	{
+		$path = self::hot_file_path();
+		if (!is_file($path))
+		{
+			throw new FuelVueException('Hot file not found: ' . $path);
+		}
+
+		$url = trim(file_get_contents($path));
+		if ($url === '')
+		{
+			throw new FuelVueException('Hot file is empty: ' . $path);
+		}
+
+		return $url;
 	}
 
 	/**
