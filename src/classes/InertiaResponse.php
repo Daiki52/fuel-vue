@@ -584,6 +584,10 @@ class InertiaResponse extends \Fuel\Core\Response
 
 		if (is_object($value))
 		{
+			if ($value instanceof \JsonSerializable)
+			{
+				return $this->normalize_json_props($value->jsonSerialize());
+			}
 			if ((class_exists('\\Orm\\Model') && $value instanceof \Orm\Model)
 				|| (class_exists('\\Fuel\\Core\\Model_Crud') && $value instanceof \Fuel\Core\Model_Crud))
 			{
